@@ -10,7 +10,7 @@
         </v-btn>
       </div>
 
-      <section class="mt-3">
+      <section v-if="pokemonSelected == null" class="mt-3">
         <p>Escolha um Pokémon</p>
         <v-text-field
           v-model="search"
@@ -19,7 +19,19 @@
           clearable
         ></v-text-field>
 
-        <ListPokemons :pokemons="pokemons"></ListPokemons>
+        <ListPokemons :pokemons="pokemons" class="mb-3" @selected="selectPokemon"></ListPokemons>
+        <v-pagination
+          v-model="page"
+          :length="totalPages"
+          color="plaing"
+          total-visible="22"
+          prev-icon="mdi-menu-left"
+          next-icon="mdi-menu-right"
+        ></v-pagination>
+      </section>
+      <section v-else class="text-center mt-5">
+        <p class="text-h5">Pokémon Selecionado: </p>
+        <CardPokemon :pokemon="pokemonSelected" :selected="true" class="mx-auto" @unselected="pokemonSelected=null"></CardPokemon>
       </section>
     </v-container>
   </section>
@@ -27,39 +39,64 @@
 
 <script>
 import axios from "axios";
+import CardPokemon from "@/components/atoms/card-pokemon.vue";
 import ListPokemons from "@/components/molecules/list-pokemons.vue";
 import PlayerTemporary from "@/components/molecules/player-temporary.vue";
 export default {
   data: () => ({
-    pokemons: [],
+    page: 1,
     search: "",
+    pokemons: [],
+    pokemonSelected: null
   }),
-  components: { PlayerTemporary, ListPokemons },
+  components: { PlayerTemporary, ListPokemons, CardPokemon },
+  computed: {
+    totalPages() {
+      return Math.ceil(899 / 18);
+    },
+  },
   watch: {
-    search(value){
-      this.searchPokemon(value)
-    }
+    search() {
+      this.searchPokemon();
+    },
+    page() {
+      this.searchPerPage();
+    },
   },
   created() {
     this.getPokemons();
   },
   methods: {
-    searchPokemon(value) {
-      let pokemon = value
-      if (pokemon == null) {
-        pokemon = ""
+    searchPokemon() {
+      let pokemon = this.search;
+      if (pokemon == null || pokemon == "") {
+        this.searchPerPage();
       }
-      let pokeSearch = pokemon.toLowerCase()
-      axios.get(`https://pokeapi.co/api/v2/pokemon/${pokeSearch}`).then(resp => {
-        this.pokemons = resp.data
-        console.log(resp.data);
-      })
+      const pokeSearch = pokemon.toLowerCase();
+      axios
+        .get(`https://pokeapi.co/api/v2/pokemon/${pokeSearch}`)
+        .then((resp) => {
+          this.pokemons = resp.data;
+          console.log(resp.data);
+        });
+    },
+    searchPerPage() {
+      this.pokemons = [];
+      const offset = (this.page - 1) * 18;
+      axios
+        .get(`https://pokeapi.co/api/v2/pokemon?limit=18&offset=${offset}`)
+        .then((resp) => {
+          this.pokemons = resp.data;
+        });
     },
     getPokemons() {
       axios.get("https://pokeapi.co/api/v2/pokemon?limit=18").then((resp) => {
         this.pokemons = resp.data;
       });
     },
+    selectPokemon(pokemon) {
+      this.pokemonSelected = pokemon;
+    }
   },
 };
 </script>
