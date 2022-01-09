@@ -5,7 +5,7 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 
 Vue.config.productionTip = false
-Vue.urlBase = Vue.prototype.urlBase = "http://localhost:8000"
+Vue.urlBase = Vue.prototype.urlBase = "http://localhost:8001"
 
 new Vue({
   router,
