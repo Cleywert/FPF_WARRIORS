@@ -12,7 +12,7 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import(/* webpackChunkName: "home" */ '@/views/Login.vue')
+    component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue')
   },
   {
     path: '/game',
@@ -24,6 +24,17 @@ const routes = [
         name: 'Start',
         component: () => import(/* webpackChunkName: "game" */ '@/views/Game/PreStart.vue'),
       },
+      {
+        path: 'fight',
+        name: 'Game Room',
+        component: () => import(/* webpackChunkName: "game" */ '@/views/Game/Game.vue'),
+      },
+      {
+        path: 'end-game',
+        name: 'End Game',
+        params: true,
+        component: () => import(/* webpackChunkName: "game" */ '@/views/Game/EndGame.vue'),
+      }
     ]
   },
 ]

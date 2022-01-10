@@ -5,20 +5,24 @@
 
       <div class="mt-2 text-center">
         <div class="mb-2">
-          <v-btn x-large color="plaing" ondbclick>
+          <v-btn x-large color="plaing" @click="startGame">
             <v-icon>mdi-play-outline</v-icon>
             INICIAR PARTIDA
           </v-btn>
         </div>
         <div>
-          <v-btn color="info">
+          <v-btn link to="/" color="info">
             <v-icon class="mr-2">mdi-home-outline</v-icon>
             VOLTAR PARA HOME
-            </v-btn>
+          </v-btn>
         </div>
       </div>
 
-      <SelectPokemon v-if="pokemonSelected == null" class="mt-3" @selected="selectPokemon"></SelectPokemon>
+      <SelectPokemon
+        v-if="pokemonSelected == null"
+        class="mt-3"
+        @selected="selectPokemon"
+      ></SelectPokemon>
       <section v-else class="text-center mt-5">
         <p class="text-h5">Pokémon Selecionado:</p>
         <CardPokemon
@@ -33,10 +37,10 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import login from "@/mixins/verify-login.js";
-import SelectPokemon from "@/components/organisms/select-pokemon.vue";
 import CardPokemon from "@/components/atoms/card-pokemon.vue";
+import SelectPokemon from "@/components/organisms/select-pokemon.vue";
 import PlayerTemporary from "@/components/molecules/player-temporary.vue";
 export default {
   data: () => ({
@@ -51,8 +55,19 @@ export default {
     this.verificaLogin();
   },
   methods: {
+    ...mapActions(["set_combate"]),
     selectPokemon(pokemon) {
       this.pokemonSelected = pokemon;
+    },
+    startGame() {
+      let idAdversario = 0;
+      do {
+        idAdversario = Math.floor(Math.random() * 899);
+      } while (idAdversario === this.pokemonSelected.id);
+
+      const adversario = idAdversario;
+      this.set_combate({ pokemon: this.pokemonSelected, adversario });
+      this.$router.push("/game/fight");
     },
   },
 };
