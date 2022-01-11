@@ -13,8 +13,8 @@
           elevation="0"
           :class="log.type == 'monstro' ? 'text-right' : 'text-left'"
           class="py-1 px-3"
-          v-for="log in logs"
-          :key="log"
+          v-for="(log, id) in logs"
+          :key="id"
         >
           <p class="mb-0">{{ log.action }} - Turno {{ log.turno }}</p>
         </v-card>

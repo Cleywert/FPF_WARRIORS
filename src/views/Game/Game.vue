@@ -75,6 +75,9 @@ export default {
     ...mapState(["pokemon", "adversario"]),
   },
   async created() {
+    if (!this.pokemon) {
+      this.$router.push({path: '/game'})
+    }
     await this.getPokemon();
     await this.getAdversario();
   },

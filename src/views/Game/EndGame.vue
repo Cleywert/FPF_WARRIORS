@@ -40,6 +40,9 @@ export default {
   computed: {
     ...mapState(["user"]),
   },
+  created() {
+    if (!this.resultado) this.$router.push({path: '/game'})
+  },
   async mounted() {
     await this.getUser();
     this.resultado = this.$route.params.resultado;
