@@ -40,14 +40,16 @@ export default {
   computed: {
     ...mapState(["user"]),
   },
+  created() {
+     if (!this.$route.params.resultado) {
+      this.$router.push({path: "/game/start"})
+    }
+  },
   mounted() {
     this.getUser();
     this.resultado = this.$route.params.resultado;
     if (!this.user.time) {
       this.updateScore();
-    }
-    if (!this.resultado) {
-      this.$router.push({path: "/game"})
     }
   },
   methods: {
