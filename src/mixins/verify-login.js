@@ -1,3 +1,4 @@
+import axios from "axios";
 import { mapActions } from "vuex";
 export default {
     methods: {
@@ -5,8 +6,9 @@ export default {
         verificaLogin() {
             const login = JSON.parse(window.localStorage.userLog);
             if(Date.now() - login.time < 86400000) {
-                delete login.time;
-                this.start_session({...login,time: Date.now()})
+                axios.get(`${this.urlBase}/user/${login.name}`).then(response => {
+                    this.start_session({...response.data, time: Date.now()})
+                })
             }
         }
     }

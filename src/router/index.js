@@ -17,7 +17,12 @@ const routes = [
   {
     path: '/ranking',
     name: 'Ranking',
-    component: () => import(/* webpackChunkName: "login" */ '@/views/Ranking.vue')
+    component: () => import(/* webpackChunkName: "ranking" */ '@/views/Ranking.vue')
+  },
+  {
+    path: '/regras',
+    name: 'Regras',
+    component: () => import(/* webpackChunkName: "regras" */ '@/views/Regras.vue')
   },
   {
     path: '/game',

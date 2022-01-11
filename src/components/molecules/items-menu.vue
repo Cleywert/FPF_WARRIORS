@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex align-center">
-    <v-list-item>REGRAS</v-list-item>
+    <v-list-item link to="/regras">REGRAS</v-list-item>
     <v-list-item link to="/game/start">JOGAR</v-list-item>
     <BtnLogin v-if="!user"></BtnLogin>
     <v-btn v-else text color="error" @click="logoff">SAIR</v-btn>
