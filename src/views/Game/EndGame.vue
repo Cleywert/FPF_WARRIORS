@@ -25,7 +25,7 @@
 
 <script>
 import axios from "axios";
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 import BtnRanking from "@/components/atoms/btn-ranking.vue";
 import DetalhesPartida from "@/components/atoms/detalhes-partida.vue";
 export default {
@@ -46,11 +46,14 @@ export default {
     this.updateScore()
   },
   methods: {
+    ...mapMutations(["SET_USER"]),
     async getUser() {
       if (this.user.time) {
         await axios.get(`${this.urlBase}/user/${this.user.name}`).then((response) => {
           this.userData = response.data;
         });
+      }else{
+        this.userData = this.user;
       }
     },
     updateScore() {
@@ -63,6 +66,9 @@ export default {
           .then((response) => {
             this.userData = response.data;
           });
+      }else{
+        this.userData.score += this.resultado.pontos;
+        this.SET_USER(this.userData)
       }
     },
   },

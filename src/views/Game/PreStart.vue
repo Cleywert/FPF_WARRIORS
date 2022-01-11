@@ -1,7 +1,16 @@
 <template>
   <section>
     <v-container>
-      <PlayerTemporary v-if="!user"></PlayerTemporary>
+      <PlayerTemporary v-if="!user || !user.time"></PlayerTemporary>
+      <v-snackbar
+        v-model="snackbar"
+        top
+        timeout="3000"
+        color="error"
+        transition="slide-y-transition"
+      >
+        {{ message }}
+      </v-snackbar>
 
       <div class="mt-2 text-center">
         <div class="mb-2">
@@ -44,6 +53,8 @@ import SelectPokemon from "@/components/organisms/select-pokemon.vue";
 import PlayerTemporary from "@/components/molecules/player-temporary.vue";
 export default {
   data: () => ({
+    snackbar: false,
+    message: "",
     pokemonSelected: null,
   }),
   mixins: [login],
@@ -60,14 +71,24 @@ export default {
       this.pokemonSelected = pokemon;
     },
     startGame() {
-      let idAdversario = 0;
-      do {
-        idAdversario = Math.floor(Math.random() * 899);
-      } while (idAdversario === this.pokemonSelected.id);
+      if (!this.user) {
+        this.message = "Insira um user name";
+        this.snackbar = true;
+      } else {
+        if (!this.pokemonSelected) {
+          this.message = "Selecione um Pokémon";
+          this.snackbar = true;
+        } else {
+          let idAdversario = 0;
+          do {
+            idAdversario = Math.floor(Math.random() * 899);
+          } while (idAdversario === this.pokemonSelected.id);
 
-      const adversario = idAdversario;
-      this.set_combate({ pokemon: this.pokemonSelected, adversario });
-      this.$router.push("/game/fight");
+          const adversario = idAdversario;
+          this.set_combate({ pokemon: this.pokemonSelected, adversario });
+          this.$router.push("/game/fight");
+        }
+      }
     },
   },
 };

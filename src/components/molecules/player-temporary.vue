@@ -1,7 +1,7 @@
 <template>
   <div class="text-center">
     <p>
-      <router-link to="/">Crie uma conta</router-link>
+      <router-link to="/login">Crie uma conta</router-link>
       para salvar suas preferências
     </p>
     <p>ou</p>
