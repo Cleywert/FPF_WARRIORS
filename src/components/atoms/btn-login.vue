@@ -1,3 +1,3 @@
 <template>
-  <v-btn outlined color="plaing" class="ml-3">LOGIN</v-btn>
+  <v-btn outlined link to="/login" color="plaing" class="ml-3">LOGIN</v-btn>
 </template>

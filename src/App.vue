@@ -9,8 +9,13 @@
 </template>
 
 <script>
+import login from "@/mixins/verify-login.js";
 export default {
   name: "App",
+  mixins: [login],
+  created() {
+    this.verificaLogin();
+  }
 };
 </script>
 

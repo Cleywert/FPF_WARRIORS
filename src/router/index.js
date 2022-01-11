@@ -17,6 +17,7 @@ const routes = [
   {
     path: '/game',
     name: 'Game',
+    redirect: '/game/start',
     component: () => import(/* webpackChunkName: "game" */ '@/views/Game/Index.vue'),
     children:[
       {
