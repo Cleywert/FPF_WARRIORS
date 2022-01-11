@@ -22,7 +22,7 @@ export default new Vuex.Store({
   },
   actions: {
     start_session(context, payload) {
-      window.localStorage.userLog = JSON.stringify({ ...payload, time: Date.now() })
+      window.localStorage.userLog = JSON.stringify(payload)
       context.commit("SET_USER", payload)
     },
     set_combate(context, payload) {
