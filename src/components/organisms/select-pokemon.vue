@@ -15,6 +15,8 @@
       :pokemons="pokemons"
       class="mb-3"
       @selected="select"
+      @favoritar="favoritar"
+      @desfavoritar="desfavoritar"
     ></ListPokemons>
     <v-pagination
       v-model="page"
@@ -57,6 +59,12 @@ export default {
   methods: {
     select(pokemon) {
       this.$emit("selected", pokemon);
+    },
+    favoritar(pokemon) {
+      this.$emit("favoritar", pokemon)
+    },
+    desfavoritar(pokemon) {
+      this.$emit("desfavoritar", pokemon)
     },
     searchPokemon() {
       this.loading = true;

@@ -27,10 +27,27 @@
         </div>
       </div>
 
+      <div v-if="favoritos && !pokemonSelected" class="mt-3">
+        <p>Pokémons favoritados</p>
+        <div class="d-flex favoritos">
+          <CardPokemon
+            v-for="(pokemon, id) in favoritos"
+            :key="id"
+            :pokemon="pokemon"
+            :selected="false"
+            class="mr-3"
+            @selected="selectPokemon"
+            @desfavoritar="desfavoritar"
+          ></CardPokemon>
+        </div>
+      </div>
+
       <SelectPokemon
         v-if="pokemonSelected == null"
-        class="mt-3"
+        class="mt-2"
+        @favoritar="favoritar"
         @selected="selectPokemon"
+        @desfavoritar="desfavoritar"
       ></SelectPokemon>
       <section v-else class="text-center mt-5">
         <p class="text-h5">Pokémon Selecionado:</p>
@@ -38,7 +55,9 @@
           :pokemon="pokemonSelected"
           :selected="true"
           class="mx-auto"
+          @favoritar="favoritar"
           @unselected="pokemonSelected = null"
+          @desfavoritar="desfavoritar"
         ></CardPokemon>
       </section>
     </v-container>
@@ -46,6 +65,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import { mapState, mapActions } from "vuex";
 import login from "@/mixins/verify-login.js";
 import CardPokemon from "@/components/atoms/card-pokemon.vue";
@@ -55,6 +75,7 @@ export default {
   data: () => ({
     snackbar: false,
     message: "",
+    favoritos: [],
     pokemonSelected: null,
   }),
   mixins: [login],
@@ -65,10 +86,47 @@ export default {
   created() {
     this.verificaLogin();
   },
+  mounted() {
+    this.getFavoritos();
+  },
   methods: {
-    ...mapActions(["set_combate"]),
+    ...mapActions(["set_combate", "start_session"]),
     selectPokemon(pokemon) {
       this.pokemonSelected = pokemon;
+    },
+    async getFavoritos() {
+      await axios
+        .get(`${this.urlBase}/user/${this.user.name}`)
+        .then((response) => {
+          this.favoritos = response.data.favoritos.split(",");
+          this.start_session({ ...response.data, time: Date.now() });
+        });
+    },
+    desfavoritar(pokemon) {
+      const id = this.favoritos.indexOf(pokemon.toString());
+      if (id > -1) this.favoritos.splice(id, 1);
+      const favoritosString = this.favoritos.toString();
+      axios
+        .put(`${this.urlBase}/user/${this.user.name}`, {
+          favoritos: favoritosString,
+        })
+        .then((response) => {
+          this.start_session({ ...response.data, time: Date.now() });
+        });
+    },
+    async favoritar(pokemon) {
+      if (!this.favoritos.includes(pokemon)) {
+        this.favoritos.push(pokemon);
+        const favoritosString = this.favoritos.toString();
+        await axios
+          .put(`${this.urlBase}/user/${this.user.name}`, {
+            favoritos: favoritosString,
+          })
+          .then((response) => {
+            this.favoritos = response.data.favoritos.split(",");
+            this.start_session({ ...response.data, time: Date.now() });
+          });
+      }
     },
     startGame() {
       if (!this.user) {
@@ -93,3 +151,19 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.favoritos {
+  overflow: hidden;
+  overflow-x: scroll;
+}
+.favoritos::-webkit-scrollbar {
+  height: 8px;
+  display: initial;
+  background-color: transparent;
+}
+.favoritos::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background-color: #9c27b0;
+}
+</style>

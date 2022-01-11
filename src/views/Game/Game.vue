@@ -1,5 +1,8 @@
 <template>
   <section>
+    <v-dialog v-model="showRules">
+        <CardRegras color="primary"></CardRegras>
+    </v-dialog>
     <v-container>
       <div class="arena mx-auto">
         <div class="personagem personagem-r">
@@ -47,6 +50,7 @@
         :special="special"
         @ataque="ataque('me')"
         @cura="curar"
+        @show-info="showRules = true"
         @ataque-especial="ataqueEspecial('me')"
       ></BtnsActions>
     </v-container>
@@ -56,6 +60,7 @@
 <script>
 import axios from "axios";
 import { mapState } from "vuex";
+import CardRegras from "@/components/molecules/card-regras.vue";
 import LogJogadas from "@/components/atoms/log-jogadas.vue";
 import BtnsActions from "@/components/atoms/btns-actions-game.vue";
 export default {
@@ -67,16 +72,17 @@ export default {
     atordoado: false,
     special: 0,
     turno: 1,
+    showRules: false,
     turnoEnemy: false,
     actions: [],
   }),
-  components: { LogJogadas, BtnsActions },
+  components: { LogJogadas, BtnsActions, CardRegras },
   computed: {
     ...mapState(["pokemon", "adversario"]),
   },
   async created() {
     if (!this.pokemon) {
-      this.$router.push({path: '/game'})
+      this.$router.push({ path: "/game" });
     }
     await this.getPokemon();
     await this.getAdversario();
@@ -198,10 +204,14 @@ export default {
       }
     },
     endGame() {
-      const resultado = { vitoria: true, pontos: 0, logs: this.actions.reverse() };
+      const resultado = {
+        vitoria: true,
+        pontos: 0,
+        logs: this.actions.reverse(),
+      };
       if (this.life <= 0) resultado.vitoria = false;
-      resultado.pontos = Math.floor(this.life * 1000 / this.turno)
-      this.$router.push({name: 'End Game', params: {resultado}})
+      resultado.pontos = Math.floor((this.life * 1000) / this.turno);
+      this.$router.push({ name: "End Game", params: { resultado } });
     },
   },
 };

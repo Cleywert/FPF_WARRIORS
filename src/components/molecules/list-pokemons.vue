@@ -1,12 +1,27 @@
 <template>
   <div>
     <transition mode="out-in" name="pokemons">
+
       <v-row v-if="pokemons.results" align="center">
         <v-col v-for="(pokemon, id) in pokemons.results" :key="id">
-          <CardPokemon :pokemon="pokemon" :selected="false" @selected="select"></CardPokemon>
+          <CardPokemon
+            :pokemon="pokemon"
+            :selected="false"
+            @selected="select"
+            @favoritar="favoritar"
+            @desfavoritar="desfavoritar"
+          ></CardPokemon>
         </v-col>
       </v-row>
-      <CardPokemon v-else :pokemon="pokemons" :selected="false" @selected="select"></CardPokemon>
+
+      <CardPokemon
+        v-else
+        :pokemon="pokemons"
+        :selected="false"
+        @selected="select"
+        @favoritar="favoritar"
+        @desfavoritar="desfavoritar"
+      ></CardPokemon>
     </transition>
   </div>
 </template>
@@ -17,6 +32,12 @@ export default {
   props: ["pokemons"],
   components: { CardPokemon },
   methods: {
+    favoritar(pokemon) {
+      this.$emit("favoritar", pokemon);
+    },
+    desfavoritar(pokemon) {
+      this.$emit("desfavoritar", pokemon)
+    },
     select(pokemon) {
       this.$emit("selected", pokemon);
     },
