@@ -49,8 +49,8 @@ export default {
         axios
           .get(`${this.urlBase}/user/${this.name}/${this.senha}`)
           .then((response) => {
-            if (typeof response.data.message === "undefined") {
-              this.start_session(response.data);
+            if (typeof response.data.message === "undefined") { // verifica se não possui mensagem de erro
+              this.start_session({...response.data, time: Date.now()});
               this.$router.push({path: "/game/start"})
             } else {
               this.message = response.data.message;
