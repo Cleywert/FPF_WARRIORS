@@ -6,7 +6,7 @@
 
       <p class="mb-0">Pontos na partida: {{ resultado.pontos }}</p>
       <p v-if="userData.name">Total de pontos: {{ userData.score }}</p>
-      
+
       <v-btn link to="/" color="primary" class="mr-2">
         <v-icon class="mr-1">mdi-home-outline</v-icon> Home
       </v-btn>
@@ -40,28 +40,31 @@ export default {
   computed: {
     ...mapState(["user"]),
   },
-  created() {
-    if (!this.resultado) this.$router.push({path: '/game'})
-  },
-  async mounted() {
-    await this.getUser();
+  mounted() {
+    this.getUser();
     this.resultado = this.$route.params.resultado;
-    this.updateScore()
+    if (!this.user.time) {
+      this.updateScore();
+    }
+    if (!this.resultado) {
+      this.$router.push({path: "/game"})
+    }
   },
   methods: {
     ...mapMutations(["SET_USER"]),
-    async getUser() {
+    getUser() {
       if (this.user.time) {
-        await axios.get(`${this.urlBase}/user/${this.user.name}`).then((response) => {
+        axios.get(`${this.urlBase}/user/${this.user.name}`).then((response) => {
           this.userData = response.data;
+          this.updateScore();
         });
-      }else{
+      } else {
         this.userData = this.user;
       }
     },
     updateScore() {
       if (this.user.time) {
-        const newScore = this.userData.score + this.resultado.pontos
+        const newScore = this.userData.score + this.resultado.pontos;
         axios
           .put(`${this.urlBase}/user/${this.userData.name}`, {
             score: newScore,
@@ -69,7 +72,7 @@ export default {
           .then((response) => {
             this.userData = response.data;
           });
-      }else{
+      } else {
         this.userData.score += this.resultado.pontos;
         this.SET_USER(this.userData)
       }
