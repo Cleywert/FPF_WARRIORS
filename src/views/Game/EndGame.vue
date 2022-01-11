@@ -3,16 +3,20 @@
     <v-container class="text-center">
       <h1 class="text-h2" v-if="resultado.vitoria">VITÓRIA</h1>
       <h1 class="text-h2" v-else>DERROTA</h1>
-      <p>Pontos na partida: {{ resultado.pontos }}</p>
+
+      <p class="mb-0">Pontos na partida: {{ resultado.pontos }}</p>
+      <p v-if="userData.name">Total de pontos: {{ userData.score }}</p>
+      
       <v-btn link to="/" color="primary" class="mr-2">
         <v-icon class="mr-1">mdi-home-outline</v-icon> Home
       </v-btn>
       <v-btn link to="/game/start" color="plaing">
-        <v-icon class="mr-1">mdi-gamepad-variant-outline</v-icon> Jogar Novamente
+        <v-icon class="mr-1">mdi-gamepad-variant-outline</v-icon> Jogar
+        Novamente
       </v-btn>
-      <BtnRanking/>
+      <BtnRanking />
 
-      <div class="mt-5 detalhes">
+      <div class="mt-5 mx-auto detalhes">
         <DetalhesPartida :logs="resultado.logs"></DetalhesPartida>
       </div>
     </v-container>
@@ -20,24 +24,53 @@
 </template>
 
 <script>
+import axios from "axios";
+import { mapState } from "vuex";
 import BtnRanking from "@/components/atoms/btn-ranking.vue";
 import DetalhesPartida from "@/components/atoms/detalhes-partida.vue";
 export default {
   data: () => ({
     resultado: null,
+    userData: null,
   }),
   components: {
-      BtnRanking,
-      DetalhesPartida
+    BtnRanking,
+    DetalhesPartida,
   },
-  mounted() {
+  computed: {
+    ...mapState(["user"]),
+  },
+  async mounted() {
+    await this.getUser();
     this.resultado = this.$route.params.resultado;
+    this.updateScore()
+  },
+  methods: {
+    async getUser() {
+      if (this.user.time) {
+        await axios.get(`${this.urlBase}/user/${this.user.name}`).then((response) => {
+          this.userData = response.data;
+        });
+      }
+    },
+    updateScore() {
+      if (this.user.time) {
+        const newScore = this.userData.score + this.resultado.pontos
+        axios
+          .put(`${this.urlBase}/user/${this.userData.name}`, {
+            score: newScore,
+          })
+          .then((response) => {
+            this.userData = response.data;
+          });
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
-.detalhes{
-    max-width: 800px;
+.detalhes {
+  max-width: 800px;
 }
 </style>

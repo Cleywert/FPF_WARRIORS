@@ -1,6 +1,6 @@
 <template>
   <section>
-      <NavBar></NavBar>
+    <NavBar></NavBar>
     <v-container>
       <ConteudoHome></ConteudoHome>
       <BotoesAcoes></BotoesAcoes>
