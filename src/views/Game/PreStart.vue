@@ -27,7 +27,7 @@
         </div>
       </div>
 
-      <div v-if="favoritos && !pokemonSelected" class="mt-3">
+      <div v-if="favoritos.length > 0 && !pokemonSelected" class="mt-3">
         <p>Pokémons favoritados</p>
         <div class="d-flex favoritos">
           <CardPokemon
